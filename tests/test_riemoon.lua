@@ -50,6 +50,23 @@ function test_riemann_send ()
    assertEquals (errno, 0)
 end
 
+function test_riemann_query ()
+   client = riemoon.connect ("tcp", "127.0.0.1", 5555)
+
+   client:send ({service = "riemoon query test",
+                 state = "ok"})
+
+   client = riemoon.connect ("tcp", "127.0.0.1", 5555)
+
+   data, errno, err = client:query ("error =")
+   assertNil (data)
+   assertEquals (errno, -1)
+
+   data, errno, err = client:query ("service = \"riemoon query test\"")
+   assertNotNil (data)
+   assertEquals (errno, 0)
+end
+
 lu = LuaUnit.new ()
 lu:setOutputType ("tap")
 

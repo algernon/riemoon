@@ -28,6 +28,11 @@ typedef struct
   riemann_client_t *client;
 } riemoon_client_t;
 
+typedef struct
+{
+  riemann_message_t *message;
+} riemoon_response_t;
+
 static int
 riemoon_destroy (lua_State *l)
 {
@@ -166,6 +171,68 @@ riemoon_send (lua_State *l)
 }
 
 static int
+riemoon_query (lua_State *l)
+{
+  riemoon_client_t *client;
+  riemoon_response_t *resp;
+  riemann_message_t *response;
+  const char *query;
+  int r;
+
+  client = (riemoon_client_t *)luaL_checkudata (l, 1, "Riemoon");
+  query = luaL_checkstring (l, 2);
+
+  r = riemann_client_send_message_oneshot
+    (client->client,
+     riemann_message_create_with_query (riemann_query_new (query)));
+
+  if (r != 0)
+    {
+      lua_settop (l, 0);
+
+      lua_pushnil (l);
+      lua_pushinteger (l, -r);
+      lua_pushstring (l, strerror (-r));
+
+      return 3;
+    }
+
+  response = riemann_client_recv_message (client->client);
+  if (!response)
+    {
+      lua_settop (l, 0);
+
+      lua_pushnil (l);
+      lua_pushinteger (l, -r);
+      lua_pushstring (l, strerror (-r));
+
+      return 3;
+    }
+
+  if (response->ok != 1)
+    {
+      lua_settop (l, 0);
+
+      lua_pushnil (l);
+      lua_pushinteger (l, -1);
+      lua_pushstring (l, response->error);
+
+      return 3;
+    }
+
+  resp = (riemoon_response_t *)lua_newuserdata (l, sizeof (riemoon_response_t));
+  resp->message = response;
+
+  luaL_getmetatable (l, "Riemoon.Response");
+  lua_setmetatable (l, -2);
+
+  lua_pushinteger (l, -r);
+  lua_pushstring (l, strerror (-r));
+
+  return 3;
+}
+
+static int
 riemoon_connect (lua_State *l)
 {
   riemoon_client_t *ud;
@@ -223,6 +290,7 @@ luaopen_riemoon (lua_State *l)
   };
   luaL_Reg methods[] = {
     {"send", riemoon_send},
+    {"query", riemoon_query},
     {"__gc", riemoon_destroy},
     {NULL, NULL}
   };

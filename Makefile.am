@@ -20,3 +20,19 @@ TESTS				= tests/test_riemoon.lua
 
 # -- Extra files to distribute --
 EXTRA_DIST			= README.md NEWS GPL LGPL
+
+# -- Custom targets --
+coverage: coverage.info.html
+
+coverage.info.html: coverage.info
+	$(AM_V_GEN)genhtml --quiet $^ --output-directory $@
+
+coverage.info: check
+	$(AM_V_GEN)lcov --quiet --capture --directory ${top_builddir}/lib --output $@ -b ${top_builddir}
+
+.PHONY: coverage
+CLEANFILES			= coverage.info
+
+clean-local:
+	rm -rf coverage.info.html
+	find ${top_builddir} -name '*.gcda' -or -name '*.gcno' | xargs rm -f

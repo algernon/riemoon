@@ -22,6 +22,15 @@ function test_riemoon_connect ()
    client, errno = riemoon.connect ()
    assertIsUserdata (client)
    assertEquals (errno, 0)
+
+   -- UDP
+   client, errno, err = riemoon.connect ("udp")
+   assertIsUserdata (client)
+   assertEquals (errno, 0)
+
+   -- Invalid type
+   assertErrorMsgEquals ("invalid riemann client type: invalid",
+                         riemoon.connect, "invalid")
 end
 
 function test_riemann_send ()

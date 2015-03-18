@@ -23,10 +23,6 @@ AC_FUNC_REALLOC
 # Check for pkg-config-enabled libraries
 PKG_PROG_PKG_CONFIG
 
-HAVE_CHECK=yes
-PKG_CHECK_MODULES(CHECK, check,,[HAVE_CHECK="no"])
-AM_CONDITIONAL([HAVE_CHECK], [test x$HAVE_CHECK != xno])
-
 PKG_CHECK_MODULES(LUA, lua5.2)
 PKG_CHECK_MODULES(RIEMANN_C, riemann-client >= 1.4.0)
 

@@ -136,7 +136,7 @@ riemoon_send (lua_State *l)
 {
   riemoon_client_t *client;
   riemann_message_t *message;
-  int i, count;
+  int i, count, r;
 
   client = (riemoon_client_t *)luaL_checkudata (l, 1, "Riemoon");
 
@@ -155,15 +155,21 @@ riemoon_send (lua_State *l)
       lua_pop (l, 1);
     }
 
-  riemann_client_send_message_oneshot (client->client, message);
+  r = riemann_client_send_message_oneshot (client->client, message);
 
-  return 0;
+  lua_settop (l, 0);
+
+  lua_pushinteger (l, -r);
+  lua_pushstring (l, strerror (-r));
+
+  return 2;
 }
 
 static int
 riemoon_connect (lua_State *l)
 {
-  riemoon_client_t *client;
+  riemoon_client_t *ud;
+  riemann_client_t *client;
   const char *type_s, *host;
   int port;
   riemann_client_type_t type;
@@ -185,15 +191,27 @@ riemoon_connect (lua_State *l)
 
   lua_settop (l, 0);
 
+  client = riemann_client_create (type, host, port);
+  if (!client)
+    {
+      lua_pushnil (l);
+      lua_pushinteger (l, errno);
+      lua_pushstring (l, strerror (errno));
+      return 3;
+    }
+
   lua_newtable (l);
 
-  client = (riemoon_client_t *)lua_newuserdata (l, sizeof (riemoon_client_t));
-  client->client = riemann_client_create (type, host, port);
+  ud = (riemoon_client_t *)lua_newuserdata (l, sizeof (riemoon_client_t));
+  ud->client = client;
 
   luaL_getmetatable (l, "Riemoon");
   lua_setmetatable (l, -2);
 
-  return 1;
+  lua_pushinteger (l, 0);
+  lua_pushstring (l, strerror (0));
+
+  return 3;
 }
 
 int

@@ -8,30 +8,46 @@ else
 end
 
 function test_riemoon_connect ()
-   client = riemoon.connect ("tcp", "127.0.0.1", 5555)
+   -- Connection failure
+   client, errno, err = riemoon.connect ("tcp", "127.0.0.1", 6555)
+   assertNil (client)
+   assertEquals (errno, 111)
 
+   -- Successful connect
+   client, errno = riemoon.connect ("tcp", "127.0.0.1", 5555)
    assertIsUserdata (client)
+   assertEquals (errno, 0)
+
+   -- Successful connect, default values
+   client, errno = riemoon.connect ()
+   assertIsUserdata (client)
+   assertEquals (errno, 0)
 end
 
 function test_riemann_send ()
-   client = riemoon.connect ("tcp", "127.0.0.1", 5555)
+   client = riemoon.connect ()
 
-   client:send({host = "localhost",
-                service = "lua test",
-                metric = 1,
-                tags = {"foo","bar", "baz"},
-                something = "else"})
+   errno, err = client:send()
+   assertEquals (errno, 0)
 
-   client:send({host = "localhost",
-                service = "lua test",
-                metric = 1,
-                tags = {"foo","bar", "baz"},
-                something = "else"},
-               {host = "localhost",
-                service = "lua test #2",
-                metric = 1,
-                tags = {"foo","bar", "baz"},
-                something = "else"})
+   errno, err = client:send({host = "localhost",
+                             service = "lua test",
+                             metric = 1,
+                             tags = {"foo","bar", "baz"},
+                             something = "else"})
+   assertEquals (errno, 0)
+
+   errno, err = client:send({host = "localhost",
+                             service = "lua test",
+                             metric = 1,
+                             tags = {"foo","bar", "baz"},
+                             something = "else"},
+                            {host = "localhost",
+                             service = "lua test #2",
+                             metric = 1,
+                             tags = {"foo","bar", "baz"},
+                             something = "else"})
+   assertEquals (errno, 0)
 end
 
 lu = LuaUnit.new ()

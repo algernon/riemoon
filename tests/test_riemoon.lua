@@ -65,6 +65,7 @@ function test_riemann_query ()
    data, errno, err = client:query ("service = \"riemoon query test\"")
    assertNotNil (data)
    assertEquals (errno, 0)
+   assertEquals (#data, 1)
 end
 
 lu = LuaUnit.new ()

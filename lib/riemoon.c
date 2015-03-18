@@ -293,6 +293,23 @@ riemoon_connect (lua_State *l)
   return 3;
 }
 
+static int
+riemoon_response_len (lua_State *l)
+{
+  riemoon_response_t *response;
+
+  response = (riemoon_response_t *)luaL_checkudata (l, 1, "Riemoon.Response");
+
+  if (!response->message)
+    {
+      lua_pushinteger (l, 0);
+      return 1;
+    }
+
+  lua_pushinteger (l, response->message->n_events);
+  return 1;
+}
+
 int
 luaopen_riemoon (lua_State *l)
 {
@@ -315,6 +332,10 @@ luaopen_riemoon (lua_State *l)
 
   lua_pushstring (l, "__gc");
   lua_pushcfunction (l, riemoon_response_destroy);
+  lua_settable (l, -3);
+
+  lua_pushstring (l, "__len");
+  lua_pushcfunction (l, riemoon_response_len);
   lua_settable (l, -3);
 
   lua_pop (l, 1);

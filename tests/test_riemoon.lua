@@ -95,6 +95,11 @@ function test_riemann_query ()
 
    data = nil
    collectgarbage ()
+
+   client = riemoon.connect ("udp")
+   data, errno, err = client:query ("true")
+   assertNil (data)
+   assertEquals (errno, 95)
 end
 
 lu = LuaUnit.new ()

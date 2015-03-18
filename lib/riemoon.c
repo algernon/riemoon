@@ -219,8 +219,8 @@ riemoon_query (lua_State *l)
       lua_settop (l, 0);
 
       lua_pushnil (l);
-      lua_pushinteger (l, -r);
-      lua_pushstring (l, strerror (-r));
+      lua_pushinteger (l, errno);
+      lua_pushstring (l, strerror (errno));
 
       return 3;
     }

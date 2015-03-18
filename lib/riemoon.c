@@ -41,16 +41,10 @@ riemoon_destroy (lua_State *l)
   return 0;
 }
 
-static int
-riemoon_send (lua_State *l)
+static riemann_event_t *
+_riemoon_event_create (lua_State *l)
 {
-  riemoon_client_t *client;
   riemann_event_t *event;
-  riemann_message_t *message;
-
-  client = (riemoon_client_t *)luaL_checkudata (l, 1, "Riemoon");
-
-  luaL_checktype (l, 2, LUA_TTABLE);
 
   event = riemann_event_new ();
 
@@ -134,8 +128,32 @@ riemoon_send (lua_State *l)
     lua_pop(l, 1);
   }
 
+  return event;
+}
+
+static int
+riemoon_send (lua_State *l)
+{
+  riemoon_client_t *client;
+  riemann_message_t *message;
+  int i, count;
+
+  client = (riemoon_client_t *)luaL_checkudata (l, 1, "Riemoon");
+
   message = riemann_message_new ();
-  riemann_message_set_events (message, event, NULL);
+
+  count = lua_gettop (l) - 1;
+
+  for (i = 1; i <= count; i++)
+    {
+      riemann_event_t *event;
+
+      luaL_checktype (l, 2, LUA_TTABLE);
+      event = _riemoon_event_create (l);
+      riemann_message_append_events (message, event, NULL);
+
+      lua_pop (l, 1);
+    }
 
   riemann_client_send_message_oneshot (client->client, message);
 

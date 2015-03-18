@@ -21,6 +21,17 @@ function test_riemann_send ()
                 metric = 1,
                 tags = {"foo","bar", "baz"},
                 something = "else"})
+
+   client:send({host = "localhost",
+                service = "lua test",
+                metric = 1,
+                tags = {"foo","bar", "baz"},
+                something = "else"},
+               {host = "localhost",
+                service = "lua test #2",
+                metric = 1,
+                tags = {"foo","bar", "baz"},
+                something = "else"})
 end
 
 lu = LuaUnit.new ()

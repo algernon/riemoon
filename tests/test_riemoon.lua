@@ -73,9 +73,16 @@ function test_riemann_query ()
    assertEquals (data[1].riemoon, "yes")
    assertEquals (data[1].tags[1], "riemoon")
    assertEquals (data[1].attributes['riemoon'], "yes")
+
+   data = nil
+   collectgarbage ()
 end
 
 lu = LuaUnit.new ()
 lu:setOutputType ("tap")
 
-os.exit (lu:runSuite ())
+r = lu:runSuite ()
+
+collectgarbage ()
+
+os.exit (r)

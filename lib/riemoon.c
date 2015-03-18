@@ -38,7 +38,7 @@ riemoon_destroy (lua_State *l)
 {
   riemoon_client_t *client;
 
-  client = (riemoon_client_t *)luaL_checkudata (l, 1, "Riemoon");
+  client = (riemoon_client_t *)luaL_checkudata (l, 1, "Riemoon.Client");
 
   if (client->client)
     riemann_client_free (client->client);
@@ -143,7 +143,7 @@ riemoon_send (lua_State *l)
   riemann_message_t *message;
   int i, count, r;
 
-  client = (riemoon_client_t *)luaL_checkudata (l, 1, "Riemoon");
+  client = (riemoon_client_t *)luaL_checkudata (l, 1, "Riemoon.Client");
 
   message = riemann_message_new ();
 
@@ -179,7 +179,7 @@ riemoon_query (lua_State *l)
   const char *query;
   int r;
 
-  client = (riemoon_client_t *)luaL_checkudata (l, 1, "Riemoon");
+  client = (riemoon_client_t *)luaL_checkudata (l, 1, "Riemoon.Client");
   query = luaL_checkstring (l, 2);
 
   r = riemann_client_send_message_oneshot
@@ -272,7 +272,7 @@ riemoon_connect (lua_State *l)
   ud = (riemoon_client_t *)lua_newuserdata (l, sizeof (riemoon_client_t));
   ud->client = client;
 
-  luaL_getmetatable (l, "Riemoon");
+  luaL_getmetatable (l, "Riemoon.Client");
   lua_setmetatable (l, -2);
 
   lua_pushinteger (l, 0);
@@ -295,7 +295,7 @@ luaopen_riemoon (lua_State *l)
     {NULL, NULL}
   };
 
-  luaL_newmetatable (l, "Riemoon");
+  luaL_newmetatable (l, "Riemoon.Client");
   lua_pushvalue (l, -1);
 
   lua_setfield (l, -2, "__index");

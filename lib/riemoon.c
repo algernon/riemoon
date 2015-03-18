@@ -45,8 +45,7 @@ riemoon_destroy (lua_State *l)
 
   client = (riemoon_client_t *)luaL_checkudata (l, 1, "Riemoon.Client");
 
-  if (client->client)
-    riemann_client_free (client->client);
+  riemann_client_free (client->client);
 
   return 0;
 }
@@ -58,8 +57,7 @@ riemoon_response_destroy (lua_State *l)
 
   response = (riemoon_response_t *)luaL_checkudata (l, 1, "Riemoon.Response");
 
-  if (response->message)
-    riemann_message_free (response->message);
+  riemann_message_free (response->message);
 
   return 0;
 }
@@ -304,12 +302,6 @@ riemoon_response_len (lua_State *l)
   riemoon_response_t *response;
 
   response = (riemoon_response_t *)luaL_checkudata (l, 1, "Riemoon.Response");
-
-  if (!response->message)
-    {
-      lua_pushinteger (l, 0);
-      return 1;
-    }
 
   lua_pushinteger (l, response->message->n_events);
   return 1;

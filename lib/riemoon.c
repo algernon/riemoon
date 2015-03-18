@@ -46,6 +46,19 @@ riemoon_destroy (lua_State *l)
   return 0;
 }
 
+static int
+riemoon_response_destroy (lua_State *l)
+{
+  riemoon_response_t *response;
+
+  response = (riemoon_response_t *)luaL_checkudata (l, 1, "Riemoon.Response");
+
+  if (response->message)
+    riemann_message_free (response->message);
+
+  return 0;
+}
+
 static riemann_event_t *
 _riemoon_event_create (lua_State *l)
 {
@@ -223,8 +236,7 @@ riemoon_query (lua_State *l)
   resp = (riemoon_response_t *)lua_newuserdata (l, sizeof (riemoon_response_t));
   resp->message = response;
 
-  luaL_getmetatable (l, "Riemoon.Response");
-  lua_setmetatable (l, -2);
+  luaL_setmetatable (l, "Riemoon.Response");
 
   lua_pushinteger (l, -r);
   lua_pushstring (l, strerror (-r));
@@ -294,6 +306,18 @@ luaopen_riemoon (lua_State *l)
     {"__gc", riemoon_destroy},
     {NULL, NULL}
   };
+  luaL_Reg response_functions[] = {
+    {NULL, NULL}
+  };
+
+  luaL_newlib (l, response_functions);
+  luaL_newmetatable (l, "Riemoon.Response");
+
+  lua_pushstring (l, "__gc");
+  lua_pushcfunction (l, riemoon_response_destroy);
+  lua_settable (l, -3);
+
+  lua_pop (l, 1);
 
   luaL_newmetatable (l, "Riemoon.Client");
   lua_pushvalue (l, -1);

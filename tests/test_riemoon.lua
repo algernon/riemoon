@@ -34,6 +34,9 @@ function test_riemann_send ()
                              service = "lua test",
                              metric = 1,
                              tags = {"foo","bar", "baz"},
+                             description = "A test message",
+                             time = 1,
+                             ttl = 60,
                              something = "else"})
    assertEquals (errno, 0)
 
@@ -73,6 +76,13 @@ function test_riemann_query ()
    assertEquals (data[1].riemoon, "yes")
    assertEquals (data[1].tags[1], "riemoon")
    assertEquals (data[1].attributes['riemoon'], "yes")
+   assertNil (data[1].description)
+   assertNil (data[1].host)
+   assertIsNumber (data[1].ttl)
+   assertIsNumber (data[1].time)
+   assertIsNumber (data[1].metric)
+   assertNil (data[1].unknown)
+   assertNil (data[2])
 
    data = nil
    collectgarbage ()

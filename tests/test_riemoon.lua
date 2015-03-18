@@ -54,7 +54,9 @@ function test_riemann_query ()
    client = riemoon.connect ("tcp", "127.0.0.1", 5555)
 
    client:send ({service = "riemoon query test",
-                 state = "ok"})
+                 state = "ok",
+                 tags = {"riemoon"},
+                 riemoon = "yes"})
 
    client = riemoon.connect ("tcp", "127.0.0.1", 5555)
 
@@ -66,6 +68,11 @@ function test_riemann_query ()
    assertNotNil (data)
    assertEquals (errno, 0)
    assertEquals (#data, 1)
+   assertEquals (data[1].service, "riemoon query test")
+   assertEquals (data[1].state, "ok")
+   assertEquals (data[1].riemoon, "yes")
+   assertEquals (data[1].tags[1], "riemoon")
+   assertEquals (data[1].attributes['riemoon'], "yes")
 end
 
 lu = LuaUnit.new ()

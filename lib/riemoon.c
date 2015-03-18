@@ -33,6 +33,11 @@ typedef struct
   riemann_message_t *message;
 } riemoon_response_t;
 
+typedef struct
+{
+  riemann_event_t *data;
+} riemoon_event_t;
+
 static int
 riemoon_destroy (lua_State *l)
 {
@@ -310,6 +315,118 @@ riemoon_response_len (lua_State *l)
   return 1;
 }
 
+static int
+riemoon_response_index (lua_State *l)
+{
+  riemoon_response_t *response;
+  riemoon_event_t *event;
+  size_t index;
+
+  response = (riemoon_response_t *)luaL_checkudata (l, 1, "Riemoon.Response");
+  index = (size_t) luaL_checkinteger (l, 2);
+
+  if (index > response->message->n_events)
+    {
+      lua_pushnil (l);
+      return 1;
+    }
+
+  event = (riemoon_event_t *)lua_newuserdata (l, sizeof (riemoon_event_t));
+  event->data = response->message->events[index - 1];
+
+  luaL_setmetatable (l, "Riemoon.Event");
+
+  return 1;
+}
+
+static int
+riemoon_event_index (lua_State *l)
+{
+  riemoon_event_t *event;
+  const char *key;
+  size_t i;
+
+  event = (riemoon_event_t *)luaL_checkudata (l, 1, "Riemoon.Event");
+  key = luaL_checkstring (l, 2);
+
+  if (strcmp (key, "service") == 0)
+    {
+      lua_pushstring (l, event->data->service);
+      return 1;
+    }
+  if (strcmp (key, "time") == 0)
+    {
+      lua_pushinteger (l, (lua_Integer)event->data->time);
+      return 1;
+    }
+  if (strcmp (key, "state") == 0)
+    {
+      lua_pushstring (l, event->data->state);
+      return 1;
+    }
+  if (strcmp (key, "host") == 0)
+    {
+      lua_pushstring (l, event->data->host);
+      return 1;
+    }
+  if (strcmp (key, "description") == 0)
+    {
+      lua_pushstring (l, event->data->description);
+      return 1;
+    }
+  if (strcmp (key, "ttl") == 0)
+    {
+      lua_pushnumber (l, (lua_Number) event->data->ttl);
+      return 1;
+    }
+  if (strcmp (key, "metric") == 0)
+    {
+      lua_pushnumber (l, (lua_Number) event->data->metric_d);
+      return 1;
+    }
+  if (strcmp (key, "tags") == 0)
+    {
+      lua_createtable (l, event->data->n_tags, 0);
+
+      for (i = 0; i < event->data->n_tags; i++)
+        {
+          lua_pushstring (l, event->data->tags[i]);
+          lua_rawseti (l, -2, i + 1);
+        }
+
+      return 1;
+    }
+  if (strcmp (key, "attributes") == 0)
+    {
+      lua_createtable (l, 0, event->data->n_attributes);
+
+      for (i = 0; i < event->data->n_attributes; i++)
+        {
+          riemann_attribute_t *a = event->data->attributes[i];
+
+          lua_pushstring (l, a->key);
+          lua_pushstring (l, a->value);
+          lua_rawset (l, -3);
+        }
+
+      return 1;
+    }
+
+  for (i = 0; i < event->data->n_attributes; i++)
+    {
+      riemann_attribute_t *a = event->data->attributes[i];
+
+      if (strcmp (a->key, key) == 0)
+        {
+          lua_pushstring (l, a->value);
+          return 1;
+        }
+    }
+
+  lua_pushnil (l);
+  return 1;
+}
+
 int
 luaopen_riemoon (lua_State *l)
 {
@@ -323,11 +440,11 @@ luaopen_riemoon (lua_State *l)
     {"__gc", riemoon_destroy},
     {NULL, NULL}
   };
-  luaL_Reg response_functions[] = {
+  luaL_Reg empty_functions[] = {
     {NULL, NULL}
   };
 
-  luaL_newlib (l, response_functions);
+  luaL_newlib (l, empty_functions);
   luaL_newmetatable (l, "Riemoon.Response");
 
   lua_pushstring (l, "__gc");
@@ -336,6 +453,19 @@ luaopen_riemoon (lua_State *l)
 
   lua_pushstring (l, "__len");
   lua_pushcfunction (l, riemoon_response_len);
+  lua_settable (l, -3);
+
+  lua_pushstring (l, "__index");
+  lua_pushcfunction (l, riemoon_response_index);
+  lua_settable (l, -3);
+
+  lua_pop (l, 1);
+
+  luaL_newlib (l, empty_functions);
+  luaL_newmetatable (l, "Riemoon.Event");
+
+  lua_pushstring (l, "__index");
+  lua_pushcfunction (l, riemoon_event_index);
   lua_settable (l, -3);
 
   lua_pop (l, 1);

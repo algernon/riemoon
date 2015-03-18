@@ -48,8 +48,8 @@ _riemoon_event_create (lua_State *l)
 
   event = riemann_event_new ();
 
-  lua_pushnil(l);
-  while (lua_next(l, -2) != 0) {
+  lua_pushnil (l);
+  while (lua_next (l, -2) != 0) {
     const char *key;
 
     key = lua_tostring (l, -2);
@@ -125,7 +125,7 @@ _riemoon_event_create (lua_State *l)
                                      riemann_attribute_create(key, value));
       }
 
-    lua_pop(l, 1);
+    lua_pop (l, 1);
   }
 
   return event;

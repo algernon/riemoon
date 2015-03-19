@@ -28,5 +28,9 @@ PKG_CHECK_MODULES(RIEMANN_C, riemann-client >= 1.4.0)
 
 AC_CONFIG_FILES([
         Makefile
+        riemoon.rockspec
+])
+AC_CONFIG_LINKS([
+        riemoon-${VERSION}-1.rockspec:riemoon.rockspec
 ])
 AC_OUTPUT

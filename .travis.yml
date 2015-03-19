@@ -8,7 +8,6 @@ env:
     - RIEMANN_VERSION=0.2.9
     - RIEMANN_C_CLIENT_VERSION=1.4.0
 before_install:
-  - sudo pip install cpp-coveralls
   - wget http://aphyr.com/riemann/riemann_${RIEMANN_VERSION}_all.deb
   - sudo dpkg -i riemann*deb
   - sudo service riemann start
@@ -30,11 +29,9 @@ install:
 before_script:
   - autoreconf -i
 script:
-  - ./configure --enable-silent-rules CFLAGS="-Wall -Wextra -O0 -g -pg  -fprofile-arcs -ftest-coverage" LDFLAGS="-pg"
+  - ./configure --enable-silent-rules CFLAGS="-Wall -Wextra -O3 -g"
   - make
   - make check VERBOSE=1
 compiler:
   - gcc
   - clang
-after_success:
-  - tests/run-coveralls

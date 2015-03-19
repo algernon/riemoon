@@ -8,6 +8,7 @@ env:
     - RIEMANN_VERSION=0.2.9
     - RIEMANN_C_CLIENT_VERSION=1.4.0
 before_install:
+  - sudo pip install cpp-coveralls
   - wget http://aphyr.com/riemann/riemann_${RIEMANN_VERSION}_all.deb
   - sudo dpkg -i riemann*deb
   - sudo service riemann start
@@ -35,3 +36,5 @@ script:
 compiler:
   - gcc
   - clang
+after_success:
+  - tests/run-coveralls

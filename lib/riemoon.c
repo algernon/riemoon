@@ -36,7 +36,7 @@ typedef struct
 } riemoon_event_t;
 
 static int
-riemoon_destroy (lua_State *l)
+riemoon_client_destroy (lua_State *l)
 {
   riemoon_client_t *client;
 
@@ -150,7 +150,7 @@ _riemoon_event_create (lua_State *l)
 }
 
 static int
-riemoon_send (lua_State *l)
+riemoon_client_send (lua_State *l)
 {
   riemoon_client_t *client;
   riemann_message_t *message;
@@ -184,7 +184,7 @@ riemoon_send (lua_State *l)
 }
 
 static int
-riemoon_query (lua_State *l)
+riemoon_client_query (lua_State *l)
 {
   riemoon_client_t *client;
   riemoon_response_t *resp;
@@ -424,9 +424,9 @@ luaopen_riemoon (lua_State *l)
     {NULL, NULL}
   };
   luaL_Reg methods[] = {
-    {"send", riemoon_send},
-    {"query", riemoon_query},
-    {"__gc", riemoon_destroy},
+    {"send", riemoon_client_send},
+    {"query", riemoon_client_query},
+    {"__gc", riemoon_client_destroy},
     {NULL, NULL}
   };
   luaL_Reg empty_functions[] = {

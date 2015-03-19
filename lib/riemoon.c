@@ -261,7 +261,7 @@ riemoon_connect (lua_State *l)
                  "expected at most 3 arguments");
 
   type_s = luaL_optstring (l, 1, "tcp");
-  host = luaL_optstring (l, 2, "localhost");
+  host = luaL_optstring (l, 2, "127.0.0.1");
   port = luaL_optinteger (l, 3, 5555);
 
   if (strcmp (type_s, "tcp") == 0)

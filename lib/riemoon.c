@@ -17,10 +17,7 @@
 
 #include <riemann/riemann-client.h>
 #include <string.h>
-#include <stdio.h>
 
-#define LUA_LIB 1
-#include <lua.h>
 #include <lauxlib.h>
 
 typedef struct

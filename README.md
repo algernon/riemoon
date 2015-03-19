@@ -1,6 +1,8 @@
 Riemoon
 =======
 
+[![Build Status](https://img.shields.io/travis/algernon/riemoon/master.svg?style=flat-square)](https://travis-ci.org/algernon/riemoon)
+
 This is a [Riemann][riemann] client library for the [Lua][lua]
 programming language, built on top of [riemann-c-client][rcc]. For
 now, it's a work in progress library.

@@ -4,9 +4,9 @@ source = {
    url = "git://github.com/algernon/riemoon"
 }
 description = {
-   summary = "<Short summary>",
+   summary = "A Riemann client library.",
    detailed = [[
-            Bla bla bla
+            A Riemann client library built on top of riemann-c-client.
     ]],
    homepage = "http://github.com/algernon/riemoon/",
    license = "LGPL3+"

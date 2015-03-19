@@ -20,8 +20,8 @@ Installation
 ------------
 
 The library follows the usual autotools way of installation, and needs
-lua 5.2+ and riemann-c-client 1.4.0+ (and libtool 2.2+ to build from
-git):
+[lua][lua] 5.2+ and [riemann-c-client][rcc] 1.4.0+ (and libtool 2.2+
+to build from git, along with [busted][busted] to run the test suite):
 
     $ git clone git://github.com/algernon/riemoon.git
     $ cd riemoon
@@ -30,6 +30,8 @@ git):
 
 From this point onward, the library is installed and fully functional,
 and one can use it from Lua.
+
+ [busted]: http://olivinelabs.com/busted/
 
 Demo
 ----

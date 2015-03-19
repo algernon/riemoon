@@ -19,7 +19,8 @@ lib_riemoon_la_SOURCES	= \
 TESTS				= tests/test_riemoon.lua
 
 # -- Extra files to distribute --
-EXTRA_DIST			= README.md NEWS GPL LGPL riemoon.rockspec.in
+EXTRA_DIST			= README.md NEWS GPL LGPL riemoon.rockspec.in \
+				  ${TESTS}
 
 # -- Custom targets --
 coverage: coverage.info.html

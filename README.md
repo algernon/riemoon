@@ -18,9 +18,9 @@ The library uses [semantic versioning][semver].
 Installation
 ------------
 
-The library requires [lua][lua] >= 5.2, [riemann-c-client][rcc] >=
-1.4.0, autotools and [busted][busted] to build. It is recommended to
-install and use the library via [LuaRocks][luarocks]:
+The library requires [lua][lua] >= 5.1 (or LuaJIT), [riemann-c-client][rcc] >=
+1.4.0, autotools and [busted][busted] to build. It is recommended to install and
+use the library via [LuaRocks][luarocks]:
 
     $ luarocks install riemoon
 

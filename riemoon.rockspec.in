@@ -12,7 +12,7 @@ description = {
    license = "LGPL3+"
 }
 dependencies = {
-   "lua >= 5.2",
+   "lua >= 5.1",
    "busted >= 2.0.rc7-0"
 }
 build = {

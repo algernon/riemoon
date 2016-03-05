@@ -288,7 +288,7 @@ riemoon_connect (lua_State *l)
   riemann_client_t *client;
   const char *type_s, *host;
   int port;
-  riemann_client_type_t type;
+  riemann_client_type_t type = RIEMANN_CLIENT_NONE;
 
   luaL_argcheck (l, lua_gettop (l) <= 3,
                  1,

@@ -1,5 +1,5 @@
 /* riemoon -- Lua bindings for riemann-c-client
- * Copyright (C) 2015  Gergely Nagy <algernon@madhouse-project.org>
+ * Copyright (C) 2015, 2016  Gergely Nagy <algernon@madhouse-project.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,6 +19,43 @@
 #include <string.h>
 
 #include <lauxlib.h>
+
+/** Lua5.1 & LuaJIT compatibility.
+ * Adapted from lua-compat-5.2[1].
+ *
+ * [1]: https://github.com/keplerproject/lua-compat-5.2/
+ */
+#if defined(LUA_VERSION_NUM) && LUA_VERSION_NUM == 501
+#define lua_rawlen(L, i) lua_objlen(L, i)
+
+#define luaL_newlib(L, l)                         \
+  (lua_newtable((L)),luaL_setfuncs((L), (l), 0))
+
+void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
+  luaL_checkstack(L, nup+1, "too many upvalues");
+  for (; l->name != NULL; l++) {  /* fill the table with given functions */
+    int i;
+    lua_pushstring(L, l->name);
+    for (i = 0; i < nup; i++)  /* copy upvalues to the top */
+      lua_pushvalue(L, -(nup + 1));
+    lua_pushcclosure(L, l->func, nup);  /* closure with those upvalues */
+    lua_settable(L, -(nup + 3)); /* table must be below the upvalues, the name and the closure */
+  }
+  lua_pop(L, nup);  /* remove upvalues */
+}
+
+void luaL_setmetatable (lua_State *L, const char *tname) {
+  luaL_checkstack(L, 1, "not enough stack slots");
+  luaL_getmetatable(L, tname);
+  lua_setmetatable(L, -2);
+}
+#endif
+
+/** Lua 5.3 compatibility.
+ */
+#if defined(LUA_VERSION_NUM) && LUA_VERSION_NUM == 503
+#define luaL_checklong(L,n)	((long)luaL_checkinteger(L, (n)))
+#endif
 
 typedef struct
 {

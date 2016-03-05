@@ -1,5 +1,9 @@
 #+STARTUP: indent showall                       -*- org -*-
 
+* 0.0.2 - UNRELEASED
+
+** Lua5.1, Lua5.3 and LuaJIT support added
+
 * 0.0.1 - <2015-03-19 Thu>
 
 Initial beta release.

@@ -17,6 +17,6 @@ dependencies = {
 }
 build = {
    type = "command",
-   build_command = "autoreconf -i && ./configure --prefix=$(PREFIX) --libdir=$(LIBDIR) --datadir=$(LUADIR) && make clean && make && make check",
+   build_command = "autoreconf -i && ./configure --prefix=$(PREFIX) --libdir=$(LIBDIR) --datadir=$(LUADIR) && make clean && make",
    install_command = "make install"
 }
